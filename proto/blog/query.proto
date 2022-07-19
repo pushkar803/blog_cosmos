@@ -5,6 +5,9 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "blog/params.proto";
+import "blog/post.proto";
+
+
 // this line is used by starport scaffolding # 1
 
 option go_package = "blog/x/blog/types";
@@ -15,7 +18,12 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/blog/blog/params";
   }
-  // this line is used by starport scaffolding # 2
+  // Queries a list of Posts items.
+	rpc Posts(QueryPostsRequest) returns (QueryPostsResponse) {
+		option (google.api.http).get = "/blog/blog/posts";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +33,19 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPostsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+
+}
+
+message QueryPostsResponse {
+  string title = 1;
+  string body = 2;
+  repeated Post Post = 3;
+  // Adding pagination to response
+  cosmos.base.query.v1beta1.PageResponse pagination = 4;
 }
 
 // this line is used by starport scaffolding # 3
