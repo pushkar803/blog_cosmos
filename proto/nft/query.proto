@@ -1,0 +1,69 @@
+syntax = "proto3";
+package blog.nft;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "nft/nft_item.proto";
+
+option go_package = "blog/x/nft/types";
+
+// Query defines the gRPC querier service.
+service Query {
+
+	// Queries a list of NftListOfOwner items.
+	rpc NftIdListOfOwner(QueryNftIdListOfOwnerRequest) returns (QueryNftIdListOfOwnerResponse) {
+		option (google.api.http).get = "/blog/blog/nft/nftIdListOfOwner";
+	}
+
+	// Queries a list of balanceOf items.
+	rpc BalanceOf(QueryBalanceOfRequest) returns (QueryBalanceOfResponse) {
+		option (google.api.http).get = "/blog/blog/nft/balanceOf";
+	}
+
+
+	// Queries a nftItem by id.
+	rpc NftItem(QueryGetNftItemRequest) returns (QueryGetNftItemResponse) {
+		option (google.api.http).get = "/blog/blog/nft/nftItem/{id}";
+	}
+
+	// Queries a list of nftItem items.
+	rpc NftItemAll(QueryAllNftItemRequest) returns (QueryAllNftItemResponse) {
+		option (google.api.http).get = "/blog/blog/nft/nftItem";
+	}
+
+}
+
+message QueryNftIdListOfOwnerRequest {
+  string ownerAddress = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryNftIdListOfOwnerResponse {
+  repeated uint64 nftIdList = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryBalanceOfRequest {
+  string ownerAddress = 1;
+}
+
+message QueryBalanceOfResponse {
+  uint64 total = 1;
+}
+
+message QueryGetNftItemRequest {
+	uint64 id = 1;
+}
+
+message QueryGetNftItemResponse {
+	NftItem NftItem = 1;
+}
+
+message QueryAllNftItemRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllNftItemResponse {
+	repeated NftItem NftItem = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

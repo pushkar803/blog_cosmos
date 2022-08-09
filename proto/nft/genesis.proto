@@ -1,0 +1,12 @@
+syntax = "proto3";
+package blog.nft;
+
+import "nft/nft_item.proto";
+
+option go_package = "blog/x/nft/types";
+
+// GenesisState defines the nft module's genesis state.
+message GenesisState {
+		repeated NftItem nftItemList = 1;
+		uint64 nftItemCount = 2;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package blog.nft;
+
+option go_package = "blog/x/nft/types";
+
+import "gogoproto/gogo.proto";
+
+message NftItem {
+  string owner = 1;
+  uint64 id = 2;
+  string tokenURI = 3; 
+}
