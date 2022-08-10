@@ -20,6 +20,10 @@ export interface RpcStatus {
   details?: ProtobufAny[];
 }
 
+export interface SagenftMsgBurnResponse {
+  result?: boolean;
+}
+
 export interface SagenftMsgMintResponse {
   /** @format uint64 */
   nftId?: string;
@@ -66,6 +70,11 @@ export interface SagenftQueryListNftItemResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface SagenftQueryNftCountOfResponse {
+  /** @format uint64 */
+  total?: string;
 }
 
 /**
@@ -388,6 +397,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/blog/sagenft/list_nft_item`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNftCountOf
+   * @summary Queries a list of NftCountOf items.
+   * @request GET:/blog/sagenft/nft_count_of/{ownerAddress}
+   */
+  queryNftCountOf = (ownerAddress: string, params: RequestParams = {}) =>
+    this.request<SagenftQueryNftCountOfResponse, RpcStatus>({
+      path: `/blog/sagenft/nft_count_of/${ownerAddress}`,
+      method: "GET",
       format: "json",
       ...params,
     });

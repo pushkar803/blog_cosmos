@@ -46,6 +46,14 @@ export interface QueryListNftIdOfOwnerResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryNftCountOfRequest {
+  ownerAddress: string;
+}
+
+export interface QueryNftCountOfResponse {
+  total: number;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -649,6 +657,133 @@ export const QueryListNftIdOfOwnerResponse = {
   },
 };
 
+const baseQueryNftCountOfRequest: object = { ownerAddress: "" };
+
+export const QueryNftCountOfRequest = {
+  encode(
+    message: QueryNftCountOfRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.ownerAddress !== "") {
+      writer.uint32(10).string(message.ownerAddress);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryNftCountOfRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryNftCountOfRequest } as QueryNftCountOfRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.ownerAddress = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryNftCountOfRequest {
+    const message = { ...baseQueryNftCountOfRequest } as QueryNftCountOfRequest;
+    if (object.ownerAddress !== undefined && object.ownerAddress !== null) {
+      message.ownerAddress = String(object.ownerAddress);
+    } else {
+      message.ownerAddress = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryNftCountOfRequest): unknown {
+    const obj: any = {};
+    message.ownerAddress !== undefined &&
+      (obj.ownerAddress = message.ownerAddress);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryNftCountOfRequest>
+  ): QueryNftCountOfRequest {
+    const message = { ...baseQueryNftCountOfRequest } as QueryNftCountOfRequest;
+    if (object.ownerAddress !== undefined && object.ownerAddress !== null) {
+      message.ownerAddress = object.ownerAddress;
+    } else {
+      message.ownerAddress = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryNftCountOfResponse: object = { total: 0 };
+
+export const QueryNftCountOfResponse = {
+  encode(
+    message: QueryNftCountOfResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.total !== 0) {
+      writer.uint32(8).uint64(message.total);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryNftCountOfResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryNftCountOfResponse,
+    } as QueryNftCountOfResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.total = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryNftCountOfResponse {
+    const message = {
+      ...baseQueryNftCountOfResponse,
+    } as QueryNftCountOfResponse;
+    if (object.total !== undefined && object.total !== null) {
+      message.total = Number(object.total);
+    } else {
+      message.total = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryNftCountOfResponse): unknown {
+    const obj: any = {};
+    message.total !== undefined && (obj.total = message.total);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryNftCountOfResponse>
+  ): QueryNftCountOfResponse {
+    const message = {
+      ...baseQueryNftCountOfResponse,
+    } as QueryNftCountOfResponse;
+    if (object.total !== undefined && object.total !== null) {
+      message.total = object.total;
+    } else {
+      message.total = 0;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -665,6 +800,8 @@ export interface Query {
   ListNftIdOfOwner(
     request: QueryListNftIdOfOwnerRequest
   ): Promise<QueryListNftIdOfOwnerResponse>;
+  /** Queries a list of NftCountOf items. */
+  NftCountOf(request: QueryNftCountOfRequest): Promise<QueryNftCountOfResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -709,6 +846,16 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryListNftIdOfOwnerResponse.decode(new Reader(data))
+    );
+  }
+
+  NftCountOf(
+    request: QueryNftCountOfRequest
+  ): Promise<QueryNftCountOfResponse> {
+    const data = QueryNftCountOfRequest.encode(request).finish();
+    const promise = this.rpc.request("blog.sagenft.Query", "NftCountOf", data);
+    return promise.then((data) =>
+      QueryNftCountOfResponse.decode(new Reader(data))
     );
   }
 }

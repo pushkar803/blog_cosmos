@@ -46,6 +46,7 @@ const getDefaultState = () => {
 				ListNftItem: {},
 				ShowNftItem: {},
 				ListNftIdOfOwner: {},
+				NftCountOf: {},
 				
 				_Structure: {
 						NftItem: getStructure(NftItem.fromPartial({})),
@@ -101,6 +102,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ListNftIdOfOwner[JSON.stringify(params)] ?? {}
+		},
+				getNftCountOf: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.NftCountOf[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -232,6 +239,43 @@ export default {
 		},
 		
 		
+		
+		
+		 		
+		
+		
+		async QueryNftCountOf({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryNftCountOf( key.ownerAddress)).data
+				
+					
+				commit('QUERY', { query: 'NftCountOf', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryNftCountOf', payload: { options: { all }, params: {...key},query }})
+				return getters['getNftCountOf']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryNftCountOf API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		async sendMsgBurn({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgBurn(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgBurn:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgBurn:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgMint({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -248,6 +292,19 @@ export default {
 			}
 		},
 		
+		async MsgBurn({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgBurn(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgBurn:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgBurn:Create Could not create message: ' + e.message)
+				}
+			}
+		},
 		async MsgMint({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)

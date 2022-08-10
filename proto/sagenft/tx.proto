@@ -8,6 +8,7 @@ option go_package = "blog/x/sagenft/types";
 // Msg defines the Msg service.
 service Msg {
       rpc Mint(MsgMint) returns (MsgMintResponse);
+  rpc Burn(MsgBurn) returns (MsgBurnResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -18,6 +19,15 @@ message MsgMint {
 
 message MsgMintResponse {
   uint64 nftId = 1;
+}
+
+message MsgBurn {
+  string creator = 1;
+  uint64 nftId = 2;
+}
+
+message MsgBurnResponse {
+  bool result = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

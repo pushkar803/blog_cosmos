@@ -32,6 +32,11 @@ service Query {
 		option (google.api.http).get = "/blog/sagenft/list_nft_id_of_owner/{ownerAddress}";
 	}
 
+// Queries a list of NftCountOf items.
+	rpc NftCountOf(QueryNftCountOfRequest) returns (QueryNftCountOfResponse) {
+		option (google.api.http).get = "/blog/sagenft/nft_count_of/{ownerAddress}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -69,6 +74,14 @@ message QueryListNftIdOfOwnerRequest {
 message QueryListNftIdOfOwnerResponse {
   repeated uint64 nftIdList = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryNftCountOfRequest {
+  string ownerAddress = 1;
+}
+
+message QueryNftCountOfResponse {
+  uint64 total = 1;
 }
 
 // this line is used by starport scaffolding # 3
