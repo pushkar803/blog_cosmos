@@ -1,16 +1,36 @@
 accounts:
   - name: alice
-    coins: ["20000token", "200000000stake"]
-  - name: bob
-    coins: ["30000token", "300000000stake"]
+    coins: ["100000000000ucoinsage"]
+  - name: bob  
+    coins: ["50000000000ucoinsage"]
 validator:
   name: alice
-  staked: "100000000stake"
+  staked: "100000000ucoinsage"
 client:
-  openapi:
-    path: "docs/static/openapi.yml"
   vuex:
     path: "vue/src/store"
 faucet:
-  name: bob
-  coins: ["5token", "100000stake"]
+  name: bob 
+  coins: ["50000000ucoinsage"]
+genesis:
+  app_state:
+    crisis: 
+      constant_fee:
+        denom: "ucoinsage"
+    gov: 
+      deposit_params: 
+          max_deposit_period: "172800s"
+          min_deposit: 
+            - amount: "1000000"
+              denom: "ucoinsage"
+    staking:
+      params:
+        bond_denom: "ucoinsage"
+    mint:
+      params:
+        mint_denom: "ucoinsage"
+    token: 
+      params: 
+        issue_token_base_fee: 
+          denom: "coinsage"
+          amount: "1000"
