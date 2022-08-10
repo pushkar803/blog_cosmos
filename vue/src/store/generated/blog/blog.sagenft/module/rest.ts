@@ -38,6 +38,21 @@ export interface SagenftNftItem {
  */
 export type SagenftParams = object;
 
+export interface SagenftQueryListNftIdOfOwnerResponse {
+  nftIdList?: string[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface SagenftQueryListNftItemResponse {
   NftItem?: SagenftNftItem[];
 
@@ -324,6 +339,33 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryListNftIdOfOwner
+   * @summary Queries a list of ListNftIdOfOwner items.
+   * @request GET:/blog/sagenft/list_nft_id_of_owner/{ownerAddress}
+   */
+  queryListNftIdOfOwner = (
+    ownerAddress: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<SagenftQueryListNftIdOfOwnerResponse, RpcStatus>({
+      path: `/blog/sagenft/list_nft_id_of_owner/${ownerAddress}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *

@@ -45,6 +45,7 @@ const getDefaultState = () => {
 				Params: {},
 				ListNftItem: {},
 				ShowNftItem: {},
+				ListNftIdOfOwner: {},
 				
 				_Structure: {
 						NftItem: getStructure(NftItem.fromPartial({})),
@@ -94,6 +95,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ShowNftItem[JSON.stringify(params)] ?? {}
+		},
+				getListNftIdOfOwner: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.ListNftIdOfOwner[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -194,6 +201,32 @@ export default {
 				return getters['getShowNftItem']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryShowNftItem API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryListNftIdOfOwner({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryListNftIdOfOwner( key.ownerAddress, query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryListNftIdOfOwner( key.ownerAddress, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'ListNftIdOfOwner', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryListNftIdOfOwner', payload: { options: { all }, params: {...key},query }})
+				return getters['getListNftIdOfOwner']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryListNftIdOfOwner API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

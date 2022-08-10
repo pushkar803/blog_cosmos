@@ -36,6 +36,16 @@ export interface QueryShowNftItemResponse {
   NftItem: NftItem | undefined;
 }
 
+export interface QueryListNftIdOfOwnerRequest {
+  ownerAddress: string;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryListNftIdOfOwnerResponse {
+  nftIdList: number[];
+  pagination: PageResponse | undefined;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -441,6 +451,204 @@ export const QueryShowNftItemResponse = {
   },
 };
 
+const baseQueryListNftIdOfOwnerRequest: object = { ownerAddress: "" };
+
+export const QueryListNftIdOfOwnerRequest = {
+  encode(
+    message: QueryListNftIdOfOwnerRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.ownerAddress !== "") {
+      writer.uint32(10).string(message.ownerAddress);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryListNftIdOfOwnerRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryListNftIdOfOwnerRequest,
+    } as QueryListNftIdOfOwnerRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.ownerAddress = reader.string();
+          break;
+        case 2:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryListNftIdOfOwnerRequest {
+    const message = {
+      ...baseQueryListNftIdOfOwnerRequest,
+    } as QueryListNftIdOfOwnerRequest;
+    if (object.ownerAddress !== undefined && object.ownerAddress !== null) {
+      message.ownerAddress = String(object.ownerAddress);
+    } else {
+      message.ownerAddress = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryListNftIdOfOwnerRequest): unknown {
+    const obj: any = {};
+    message.ownerAddress !== undefined &&
+      (obj.ownerAddress = message.ownerAddress);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryListNftIdOfOwnerRequest>
+  ): QueryListNftIdOfOwnerRequest {
+    const message = {
+      ...baseQueryListNftIdOfOwnerRequest,
+    } as QueryListNftIdOfOwnerRequest;
+    if (object.ownerAddress !== undefined && object.ownerAddress !== null) {
+      message.ownerAddress = object.ownerAddress;
+    } else {
+      message.ownerAddress = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryListNftIdOfOwnerResponse: object = { nftIdList: 0 };
+
+export const QueryListNftIdOfOwnerResponse = {
+  encode(
+    message: QueryListNftIdOfOwnerResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    writer.uint32(10).fork();
+    for (const v of message.nftIdList) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryListNftIdOfOwnerResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryListNftIdOfOwnerResponse,
+    } as QueryListNftIdOfOwnerResponse;
+    message.nftIdList = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.nftIdList.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.nftIdList.push(longToNumber(reader.uint64() as Long));
+          }
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryListNftIdOfOwnerResponse {
+    const message = {
+      ...baseQueryListNftIdOfOwnerResponse,
+    } as QueryListNftIdOfOwnerResponse;
+    message.nftIdList = [];
+    if (object.nftIdList !== undefined && object.nftIdList !== null) {
+      for (const e of object.nftIdList) {
+        message.nftIdList.push(Number(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryListNftIdOfOwnerResponse): unknown {
+    const obj: any = {};
+    if (message.nftIdList) {
+      obj.nftIdList = message.nftIdList.map((e) => e);
+    } else {
+      obj.nftIdList = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryListNftIdOfOwnerResponse>
+  ): QueryListNftIdOfOwnerResponse {
+    const message = {
+      ...baseQueryListNftIdOfOwnerResponse,
+    } as QueryListNftIdOfOwnerResponse;
+    message.nftIdList = [];
+    if (object.nftIdList !== undefined && object.nftIdList !== null) {
+      for (const e of object.nftIdList) {
+        message.nftIdList.push(e);
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -453,6 +661,10 @@ export interface Query {
   ShowNftItem(
     request: QueryShowNftItemRequest
   ): Promise<QueryShowNftItemResponse>;
+  /** Queries a list of ListNftIdOfOwner items. */
+  ListNftIdOfOwner(
+    request: QueryListNftIdOfOwnerRequest
+  ): Promise<QueryListNftIdOfOwnerResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -483,6 +695,20 @@ export class QueryClientImpl implements Query {
     const promise = this.rpc.request("blog.sagenft.Query", "ShowNftItem", data);
     return promise.then((data) =>
       QueryShowNftItemResponse.decode(new Reader(data))
+    );
+  }
+
+  ListNftIdOfOwner(
+    request: QueryListNftIdOfOwnerRequest
+  ): Promise<QueryListNftIdOfOwnerResponse> {
+    const data = QueryListNftIdOfOwnerRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "blog.sagenft.Query",
+      "ListNftIdOfOwner",
+      data
+    );
+    return promise.then((data) =>
+      QueryListNftIdOfOwnerResponse.decode(new Reader(data))
     );
   }
 }
