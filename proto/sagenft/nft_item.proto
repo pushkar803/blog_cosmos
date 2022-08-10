@@ -1,5 +1,5 @@
 syntax = "proto3";
-package blog.nft;
+package blog.sagenft;
 
 option go_package = "blog/x/sagenft/types";
 
