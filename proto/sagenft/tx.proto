@@ -9,6 +9,7 @@ option go_package = "blog/x/sagenft/types";
 service Msg {
       rpc Mint(MsgMint) returns (MsgMintResponse);
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
+  rpc Transfer(MsgTransfer) returns (MsgTransferResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -28,6 +29,16 @@ message MsgBurn {
 
 message MsgBurnResponse {
   bool result = 1;
+}
+
+message MsgTransfer {
+  string creator = 1;
+  uint64 nftId = 2;
+  string toAddress = 3;
+}
+
+message MsgTransferResponse {
+  string status = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

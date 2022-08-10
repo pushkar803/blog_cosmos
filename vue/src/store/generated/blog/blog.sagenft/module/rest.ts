@@ -29,6 +29,10 @@ export interface SagenftMsgMintResponse {
   nftId?: string;
 }
 
+export interface SagenftMsgTransferResponse {
+  status?: string;
+}
+
 export interface SagenftNftItem {
   owner?: string;
 
