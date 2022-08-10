@@ -1,0 +1,23 @@
+syntax = "proto3";
+package blog.sagenft;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "blog/x/sagenft/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc Mint(MsgMint) returns (MsgMintResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgMint {
+  string creator = 1;
+  string tokenURI = 2;
+}
+
+message MsgMintResponse {
+  uint64 nftId = 1;
+}
+
+// this line is used by starport scaffolding # proto/tx/message

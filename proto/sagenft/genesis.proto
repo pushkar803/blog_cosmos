@@ -1,0 +1,14 @@
+syntax = "proto3";
+package blog.sagenft;
+
+import "gogoproto/gogo.proto";
+import "sagenft/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "blog/x/sagenft/types";
+
+// GenesisState defines the sagenft module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

@@ -103,6 +103,9 @@ import (
 	blogmodule "blog/x/blog"
 	blogmodulekeeper "blog/x/blog/keeper"
 	blogmoduletypes "blog/x/blog/types"
+	sagenftmodule "blog/x/sagenft"
+	sagenftmodulekeeper "blog/x/sagenft/keeper"
+	sagenftmoduletypes "blog/x/sagenft/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -158,6 +161,7 @@ var (
 		vesting.AppModuleBasic{},
 		monitoringp.AppModuleBasic{},
 		blogmodule.AppModuleBasic{},
+		sagenftmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -231,6 +235,8 @@ type App struct {
 	ScopedMonitoringKeeper capabilitykeeper.ScopedKeeper
 
 	BlogKeeper blogmodulekeeper.Keeper
+
+	SagenftKeeper sagenftmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -268,6 +274,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
 		blogmoduletypes.StoreKey,
+		sagenftmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -394,6 +401,14 @@ func New(
 	)
 	blogModule := blogmodule.NewAppModule(appCodec, app.BlogKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.SagenftKeeper = *sagenftmodulekeeper.NewKeeper(
+		appCodec,
+		keys[sagenftmoduletypes.StoreKey],
+		keys[sagenftmoduletypes.MemStoreKey],
+		app.GetSubspace(sagenftmoduletypes.ModuleName),
+	)
+	sagenftModule := sagenftmodule.NewAppModule(appCodec, app.SagenftKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -436,6 +451,7 @@ func New(
 		transferModule,
 		monitoringModule,
 		blogModule,
+		sagenftModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -464,6 +480,7 @@ func New(
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
 		blogmoduletypes.ModuleName,
+		sagenftmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -488,6 +505,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
 		blogmoduletypes.ModuleName,
+		sagenftmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -517,6 +535,7 @@ func New(
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
 		blogmoduletypes.ModuleName,
+		sagenftmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -542,6 +561,7 @@ func New(
 		transferModule,
 		monitoringModule,
 		blogModule,
+		sagenftModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -732,6 +752,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
 	paramsKeeper.Subspace(blogmoduletypes.ModuleName)
+	paramsKeeper.Subspace(sagenftmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
