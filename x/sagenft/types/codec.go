@@ -11,6 +11,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgMint{}, "sagenft/Mint", nil)
 	cdc.RegisterConcrete(&MsgBurn{}, "sagenft/Burn", nil)
 	cdc.RegisterConcrete(&MsgTransfer{}, "sagenft/Transfer", nil)
+	cdc.RegisterConcrete(&MsgDistribute{}, "sagenft/Distribute", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -23,6 +24,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgTransfer{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgDistribute{},
 	)
 	// this line is used by starport scaffolding # 3
 

@@ -32,6 +32,16 @@ export interface MsgTransferResponse {
   status: string;
 }
 
+export interface MsgDistribute {
+  creator: string;
+  nftIds: string;
+  toAddresses: string;
+}
+
+export interface MsgDistributeResponse {
+  status: string;
+}
+
 const baseMsgMint: object = { creator: "", tokenURI: "" };
 
 export const MsgMint = {
@@ -433,12 +443,163 @@ export const MsgTransferResponse = {
   },
 };
 
+const baseMsgDistribute: object = { creator: "", nftIds: "", toAddresses: "" };
+
+export const MsgDistribute = {
+  encode(message: MsgDistribute, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.nftIds !== "") {
+      writer.uint32(18).string(message.nftIds);
+    }
+    if (message.toAddresses !== "") {
+      writer.uint32(26).string(message.toAddresses);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDistribute {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDistribute } as MsgDistribute;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.nftIds = reader.string();
+          break;
+        case 3:
+          message.toAddresses = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDistribute {
+    const message = { ...baseMsgDistribute } as MsgDistribute;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.nftIds !== undefined && object.nftIds !== null) {
+      message.nftIds = String(object.nftIds);
+    } else {
+      message.nftIds = "";
+    }
+    if (object.toAddresses !== undefined && object.toAddresses !== null) {
+      message.toAddresses = String(object.toAddresses);
+    } else {
+      message.toAddresses = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDistribute): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.nftIds !== undefined && (obj.nftIds = message.nftIds);
+    message.toAddresses !== undefined &&
+      (obj.toAddresses = message.toAddresses);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgDistribute>): MsgDistribute {
+    const message = { ...baseMsgDistribute } as MsgDistribute;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.nftIds !== undefined && object.nftIds !== null) {
+      message.nftIds = object.nftIds;
+    } else {
+      message.nftIds = "";
+    }
+    if (object.toAddresses !== undefined && object.toAddresses !== null) {
+      message.toAddresses = object.toAddresses;
+    } else {
+      message.toAddresses = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgDistributeResponse: object = { status: "" };
+
+export const MsgDistributeResponse = {
+  encode(
+    message: MsgDistributeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.status !== "") {
+      writer.uint32(10).string(message.status);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDistributeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDistributeResponse } as MsgDistributeResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.status = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDistributeResponse {
+    const message = { ...baseMsgDistributeResponse } as MsgDistributeResponse;
+    if (object.status !== undefined && object.status !== null) {
+      message.status = String(object.status);
+    } else {
+      message.status = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDistributeResponse): unknown {
+    const obj: any = {};
+    message.status !== undefined && (obj.status = message.status);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgDistributeResponse>
+  ): MsgDistributeResponse {
+    const message = { ...baseMsgDistributeResponse } as MsgDistributeResponse;
+    if (object.status !== undefined && object.status !== null) {
+      message.status = object.status;
+    } else {
+      message.status = "";
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   Mint(request: MsgMint): Promise<MsgMintResponse>;
   Burn(request: MsgBurn): Promise<MsgBurnResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   Transfer(request: MsgTransfer): Promise<MsgTransferResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  Distribute(request: MsgDistribute): Promise<MsgDistributeResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -462,6 +623,14 @@ export class MsgClientImpl implements Msg {
     const data = MsgTransfer.encode(request).finish();
     const promise = this.rpc.request("blog.sagenft.Msg", "Transfer", data);
     return promise.then((data) => MsgTransferResponse.decode(new Reader(data)));
+  }
+
+  Distribute(request: MsgDistribute): Promise<MsgDistributeResponse> {
+    const data = MsgDistribute.encode(request).finish();
+    const promise = this.rpc.request("blog.sagenft.Msg", "Distribute", data);
+    return promise.then((data) =>
+      MsgDistributeResponse.decode(new Reader(data))
+    );
   }
 }
 

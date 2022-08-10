@@ -5,14 +5,16 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgMint } from "./types/sagenft/tx";
-import { MsgTransfer } from "./types/sagenft/tx";
 import { MsgBurn } from "./types/sagenft/tx";
+import { MsgTransfer } from "./types/sagenft/tx";
+import { MsgDistribute } from "./types/sagenft/tx";
 
 
 const types = [
   ["/blog.sagenft.MsgMint", MsgMint],
-  ["/blog.sagenft.MsgTransfer", MsgTransfer],
   ["/blog.sagenft.MsgBurn", MsgBurn],
+  ["/blog.sagenft.MsgTransfer", MsgTransfer],
+  ["/blog.sagenft.MsgDistribute", MsgDistribute],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -46,8 +48,9 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgMint: (data: MsgMint): EncodeObject => ({ typeUrl: "/blog.sagenft.MsgMint", value: MsgMint.fromPartial( data ) }),
-    msgTransfer: (data: MsgTransfer): EncodeObject => ({ typeUrl: "/blog.sagenft.MsgTransfer", value: MsgTransfer.fromPartial( data ) }),
     msgBurn: (data: MsgBurn): EncodeObject => ({ typeUrl: "/blog.sagenft.MsgBurn", value: MsgBurn.fromPartial( data ) }),
+    msgTransfer: (data: MsgTransfer): EncodeObject => ({ typeUrl: "/blog.sagenft.MsgTransfer", value: MsgTransfer.fromPartial( data ) }),
+    msgDistribute: (data: MsgDistribute): EncodeObject => ({ typeUrl: "/blog.sagenft.MsgDistribute", value: MsgDistribute.fromPartial( data ) }),
     
   };
 };

@@ -10,6 +10,7 @@ service Msg {
       rpc Mint(MsgMint) returns (MsgMintResponse);
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
   rpc Transfer(MsgTransfer) returns (MsgTransferResponse);
+  rpc Distribute(MsgDistribute) returns (MsgDistributeResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -38,6 +39,16 @@ message MsgTransfer {
 }
 
 message MsgTransferResponse {
+  string status = 1;
+}
+
+message MsgDistribute {
+  string creator = 1;
+  string nftIds = 2;
+  string toAddresses = 3;
+}
+
+message MsgDistributeResponse {
   string status = 1;
 }
 

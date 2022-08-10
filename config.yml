@@ -3,6 +3,10 @@ accounts:
     coins: ["100000000000ucoinsage"]
   - name:  bob 
     coins: ["50000000000ucoinsage"]
+  - name:  sree
+    coins: ["100000000000ucoinsage"]
+  - name:  pushkar 
+    coins: ["50000000000ucoinsage"]
 validator:
   name: alice
   staked: "100000000ucoinsage"

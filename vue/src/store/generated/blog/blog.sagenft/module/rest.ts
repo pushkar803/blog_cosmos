@@ -24,6 +24,10 @@ export interface SagenftMsgBurnResponse {
   result?: boolean;
 }
 
+export interface SagenftMsgDistributeResponse {
+  status?: string;
+}
+
 export interface SagenftMsgMintResponse {
   /** @format uint64 */
   nftId?: string;
