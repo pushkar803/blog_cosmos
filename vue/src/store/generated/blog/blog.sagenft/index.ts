@@ -44,6 +44,7 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				ListNftItem: {},
+				ShowNftItem: {},
 				
 				_Structure: {
 						NftItem: getStructure(NftItem.fromPartial({})),
@@ -87,6 +88,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ListNftItem[JSON.stringify(params)] ?? {}
+		},
+				getShowNftItem: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.ShowNftItem[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -165,6 +172,28 @@ export default {
 				return getters['getListNftItem']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryListNftItem API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryShowNftItem({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryShowNftItem( key.nftId)).data
+				
+					
+				commit('QUERY', { query: 'ShowNftItem', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryShowNftItem', payload: { options: { all }, params: {...key},query }})
+				return getters['getShowNftItem']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryShowNftItem API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

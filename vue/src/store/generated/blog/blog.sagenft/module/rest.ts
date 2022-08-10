@@ -61,6 +61,10 @@ export interface SagenftQueryParamsResponse {
   params?: SagenftParams;
 }
 
+export interface SagenftQueryShowNftItemResponse {
+  NftItem?: SagenftNftItem;
+}
+
 /**
 * message SomeRequest {
          Foo some_parameter = 1;
@@ -357,6 +361,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryParams = (params: RequestParams = {}) =>
     this.request<SagenftQueryParamsResponse, RpcStatus>({
       path: `/blog/sagenft/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryShowNftItem
+   * @summary Queries a list of ShowNftItem items.
+   * @request GET:/blog/sagenft/show_nft_item/{nftId}
+   */
+  queryShowNftItem = (nftId: string, params: RequestParams = {}) =>
+    this.request<SagenftQueryShowNftItemResponse, RpcStatus>({
+      path: `/blog/sagenft/show_nft_item/${nftId}`,
       method: "GET",
       format: "json",
       ...params,

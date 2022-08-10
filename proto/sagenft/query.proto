@@ -22,6 +22,11 @@ service Query {
 		option (google.api.http).get = "/blog/sagenft/list_nft_item";
 	}
 
+// Queries a list of ShowNftItem items.
+	rpc ShowNftItem(QueryShowNftItemRequest) returns (QueryShowNftItemResponse) {
+		option (google.api.http).get = "/blog/sagenft/show_nft_item/{nftId}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -41,6 +46,14 @@ message QueryListNftItemRequest {
 message QueryListNftItemResponse {
   repeated NftItem NftItem = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryShowNftItemRequest {
+  uint64 nftId = 1;
+}
+
+message QueryShowNftItemResponse {
+  NftItem NftItem = 1;
 }
 
 // this line is used by starport scaffolding # 3

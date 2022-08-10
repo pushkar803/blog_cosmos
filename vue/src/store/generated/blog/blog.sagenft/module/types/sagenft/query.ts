@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Reader, Writer } from "protobufjs/minimal";
+import { Reader, util, configure, Writer } from "protobufjs/minimal";
+import * as Long from "long";
 import { Params } from "../sagenft/params";
 import {
   PageRequest,
@@ -25,6 +26,14 @@ export interface QueryListNftItemRequest {
 export interface QueryListNftItemResponse {
   NftItem: NftItem[];
   pagination: PageResponse | undefined;
+}
+
+export interface QueryShowNftItemRequest {
+  nftId: number;
+}
+
+export interface QueryShowNftItemResponse {
+  NftItem: NftItem | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -294,6 +303,144 @@ export const QueryListNftItemResponse = {
   },
 };
 
+const baseQueryShowNftItemRequest: object = { nftId: 0 };
+
+export const QueryShowNftItemRequest = {
+  encode(
+    message: QueryShowNftItemRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.nftId !== 0) {
+      writer.uint32(8).uint64(message.nftId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryShowNftItemRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryShowNftItemRequest,
+    } as QueryShowNftItemRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.nftId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryShowNftItemRequest {
+    const message = {
+      ...baseQueryShowNftItemRequest,
+    } as QueryShowNftItemRequest;
+    if (object.nftId !== undefined && object.nftId !== null) {
+      message.nftId = Number(object.nftId);
+    } else {
+      message.nftId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryShowNftItemRequest): unknown {
+    const obj: any = {};
+    message.nftId !== undefined && (obj.nftId = message.nftId);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryShowNftItemRequest>
+  ): QueryShowNftItemRequest {
+    const message = {
+      ...baseQueryShowNftItemRequest,
+    } as QueryShowNftItemRequest;
+    if (object.nftId !== undefined && object.nftId !== null) {
+      message.nftId = object.nftId;
+    } else {
+      message.nftId = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryShowNftItemResponse: object = {};
+
+export const QueryShowNftItemResponse = {
+  encode(
+    message: QueryShowNftItemResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.NftItem !== undefined) {
+      NftItem.encode(message.NftItem, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryShowNftItemResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryShowNftItemResponse,
+    } as QueryShowNftItemResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.NftItem = NftItem.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryShowNftItemResponse {
+    const message = {
+      ...baseQueryShowNftItemResponse,
+    } as QueryShowNftItemResponse;
+    if (object.NftItem !== undefined && object.NftItem !== null) {
+      message.NftItem = NftItem.fromJSON(object.NftItem);
+    } else {
+      message.NftItem = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryShowNftItemResponse): unknown {
+    const obj: any = {};
+    message.NftItem !== undefined &&
+      (obj.NftItem = message.NftItem
+        ? NftItem.toJSON(message.NftItem)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryShowNftItemResponse>
+  ): QueryShowNftItemResponse {
+    const message = {
+      ...baseQueryShowNftItemResponse,
+    } as QueryShowNftItemResponse;
+    if (object.NftItem !== undefined && object.NftItem !== null) {
+      message.NftItem = NftItem.fromPartial(object.NftItem);
+    } else {
+      message.NftItem = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -302,6 +449,10 @@ export interface Query {
   ListNftItem(
     request: QueryListNftItemRequest
   ): Promise<QueryListNftItemResponse>;
+  /** Queries a list of ShowNftItem items. */
+  ShowNftItem(
+    request: QueryShowNftItemRequest
+  ): Promise<QueryShowNftItemResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -324,6 +475,16 @@ export class QueryClientImpl implements Query {
       QueryListNftItemResponse.decode(new Reader(data))
     );
   }
+
+  ShowNftItem(
+    request: QueryShowNftItemRequest
+  ): Promise<QueryShowNftItemResponse> {
+    const data = QueryShowNftItemRequest.encode(request).finish();
+    const promise = this.rpc.request("blog.sagenft.Query", "ShowNftItem", data);
+    return promise.then((data) =>
+      QueryShowNftItemResponse.decode(new Reader(data))
+    );
+  }
 }
 
 interface Rpc {
@@ -333,6 +494,16 @@ interface Rpc {
     data: Uint8Array
   ): Promise<Uint8Array>;
 }
+
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
@@ -344,3 +515,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}
